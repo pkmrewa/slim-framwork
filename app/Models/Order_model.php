@@ -7,7 +7,7 @@ namespace App\Models;
  *
  * @author nitins
  */
-class Orders extends MasterModel
+class Order_model
 {
 
     /**
