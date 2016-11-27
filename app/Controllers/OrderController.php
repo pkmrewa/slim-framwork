@@ -23,32 +23,33 @@ class OrderController
     public function index(Request $request, Response $response)
     {
         //load the modle class
-        $users_model = new \App\Models\Order_model($this->c->db);
+        $orders_model = new \App\Models\Order_model($this->c->db);
         //call the function to get list of users
-        $users = $users_model->users();
-        $output['data'] = $users;
+        $orders = $orders_model->orders();
+        $output['data'] = $orders;
         return $response->withJson($output, 200);
     }
 
     public function show(Request $request, Response $response)
     {
+        //die('show');
         //retive the parameter from url
-        $user_guid = $request->getAttribute('user_guid');
+        $order_guid = $request->getAttribute('order_guid');
         //load the modle class
-        $users_model = new \App\Models\User_model($this->c->db);
-        $user = $users_model->get_user_by_guid($user_guid);
-        if (is_null($user))
+        $orders_model = new \App\Models\Order_model($this->c->db);
+        $order = $orders_model->get_order_by_guid($order_guid);
+        if (is_null($order))
         {
             $output['message'] = "error";
             $output['data'] = [
-                'user_guid' => "user guid is not valid"
+                'order_guid' => "order guid is not valid"
             ];
             return $response->withJson($output, 403);
         }
         else
         {
             $output['message'] = "success";
-            $output['data'] = $user;
+            $output['data'] = $order;
             return $response->withJson($output, 200);
         }
     }
@@ -66,17 +67,29 @@ class OrderController
         else
         {
             //load the modle class
-            $users_model = new \App\Models\User_model($this->c->db);
+            $user_model = new \App\Models\User_model($this->c->db);
+            $order_model = new \App\Models\Order_model($this->c->db);
 
-            $first_name = $post['first_name'];
-            $last_name = $post['last_name'];
-            $email = $post['email'];
-            $phone = $post['phone'];
-
-            $user = $users_model->create_user($first_name, $last_name, $email, $phone);
-            $output['message'] = "success";
-            $output['data'] = $user;
-            return $response->withJson($output, 200);
+            $user_guid = $post['user_guid'];
+            $order_total = $post['order_total'];
+            $user = $user_model->get_user_by_guid($user_guid);
+            if (is_null($user))
+            {
+                $output = [
+                    'message' => "error",
+                    'data' => [
+                        'user_guid' => "user guid is not valid"
+                    ],
+                ];
+                return $response->withJson($output, 403);
+            }
+            else
+            {
+                $order = $order_model->create_order($user_guid, $order_total);
+                $output['message'] = "success";
+                $output['data'] = $order;
+                return $response->withJson($output, 200);
+            }
         }
     }
 
@@ -86,26 +99,26 @@ class OrderController
         $post = $request->getParsedBody();
 
         //retive the parameter from url
-        $user_guid = $request->getAttribute('user_guid');
+        $order_guid = $request->getAttribute('order_guid');
         //load the modle class
-        $users_model = new \App\Models\User_model($this->c->db);
-        $user = $users_model->get_user_by_guid($user_guid);
-        if (empty($user_guid))
+        $order_model = new \App\Models\Order_model($this->c->db);
+        $order = $order_model->get_order_by_guid($order_guid);
+        if (empty($order_guid))
         {
             $output = [
                 'message' => "error",
                 'data' => [
-                    'user_guid' => "user guid is required"
+                    'order_guid' => "order guid is required"
                 ],
             ];
             return $response->withJson($output, 403);
         }
-        elseif (is_null($user))
+        elseif (is_null($order))
         {
             $output = [
                 'message' => "error",
                 'data' => [
-                    'user_guid' => "user guid is not valid"
+                    'order_guid' => "order guid is not valid"
                 ],
             ];
             return $response->withJson($output, 403);
@@ -119,16 +132,12 @@ class OrderController
         }
         else
         {
-            $first_name = $post['first_name'];
-            $last_name = $post['last_name'];
-            $email = $post['email'];
-            $phone = $post['phone'];
+            $status = $post['status'];
 
-            $users_model->update_user_by_guid($user_guid, $first_name, $last_name, $email, $phone);
-            $user = $users_model->get_user_by_guid($user_guid);
+            $order = $order_model->update_order_by_guid($order_guid, $status);
             $output = [
                 'message' => "success",
-                'data' => $user,
+                'data' => $order,
             ];
             return $response->withJson($output, 200);
         }
@@ -137,33 +146,33 @@ class OrderController
     public function delete(Request $request, Response $response)
     {
         //retive the parameter from url
-        $user_guid = $request->getAttribute('user_guid');
+        $order_guid = $request->getAttribute('order_guid');
         //load the modle class
-        $users_model = new \App\Models\User_model($this->c->db);
-        $user = $users_model->get_user_by_guid($user_guid);
-        if (empty($user_guid))
+        $order_model = new \App\Models\Order_model($this->c->db);
+        $order = $order_model->get_order_by_guid($order_guid);
+        if (empty($order_guid))
         {
             $output = [
                 'message' => "error",
                 'data' => [
-                    'user_guid' => "user guid is required"
+                    'order_guid' => "order guid is required"
                 ],
             ];
             return $response->withJson($output, 403);
         }
-        elseif (is_null($user))
+        elseif (is_null($order))
         {
             $output = [
                 'message' => "error",
                 'data' => [
-                    'user_guid' => "user guid is not valid"
+                    'order_guid' => "order guid is not valid"
                 ],
             ];
             return $response->withJson($output, 403);
         }
         else
         {
-            $users_model->delete_user_by_guid($user_guid);
+            $order_model->delete_order_by_guid($order_guid);
             $output = [
                 'message' => "success",
                 'data' => [],

@@ -54,17 +54,29 @@ $app->group('/api', function() use ($app)
         // GET Endpoint for '/orders' user list
         $app->get('', 'App\Controllers\OrderController:index');
 
-        //GET Endpoint for '/orders/order_guid' order details
-        $app->get('/{order_guid}', 'App\Controllers\OrderController:show');
+        //GET Endpoint for '/orders/order_guid' user details
+        //Create the validators
+        $app->get('/[{order_guid}]', 'App\Controllers\OrderController:show');
 
-        //POST Endpoint for '/orders' create new order
-        $app->post('', 'App\Controllers\OrderController:create');
+        //POST Endpoint for '/orders' create user
+        //Create the validators
+        $create_validators = [
+            'user_guid' => v::stringType()->notEmpty(),
+            'order_total' => v::stringType()->notEmpty(),
+        ];
+
+        $app->post('', 'App\Controllers\OrderController:create')
+                ->add(new \DavidePastore\Slim\Validation\Validation($create_validators));
 
         //PUT Endpoint for '/orders/order_guid' user details update
-        $app->put('/{order_guid}', 'App\Controllers\OrderController:update');
+        $update_validators = [
+            'status' => v::stringType()->notEmpty(),
+        ];
+        $app->put('/[{order_guid}]', 'App\Controllers\OrderController:update')
+                ->add(new \DavidePastore\Slim\Validation\Validation($update_validators));
 
         //DELTE Endpoint for '/orders/order_guid' user details delete
-        $app->delete('/{order_guid}', 'App\Controllers\OrderController:delete');
+        $app->delete('/[{order_guid}]', 'App\Controllers\OrderController:delete');
     });
 });
 
