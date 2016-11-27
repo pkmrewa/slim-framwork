@@ -46,7 +46,7 @@ $app->group('/api', function() use ($app)
                 ->add(new \DavidePastore\Slim\Validation\Validation($update_validators));
 
         //DELTE Endpoint for '/users/user_guid' user details delete
-        $app->delete('/{user_guid}', 'App\Controllers\UserController:delete');
+        $app->delete('/[{user_guid}]', 'App\Controllers\UserController:delete');
     });
 
     $app->group('/orders', function () use($app)
