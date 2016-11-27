@@ -20,18 +20,14 @@ class UserController
         $this->c = $c;
     }
 
-    var $res = [
-        'message' => "success",
-    ];
-
     public function index(Request $request, Response $response)
     {
         //load the modle class
         $users_model = new \App\Models\User_model($this->c->db);
         //call the function to get list of users
         $users = $users_model->users();
-        $this->res['data'] = $users;
-        return $response->withJson($this->res, 200);
+        $output['data'] = $users;
+        return $response->withJson($output, 200);
     }
 
     public function show(Request $request, Response $response)
@@ -43,13 +39,18 @@ class UserController
         $user = $users_model->get_user_by_guid($user_guid);
         if (is_null($user))
         {
-            $this->res['message'] = "user guid is not valid.";
+            $output['message'] = "error";
+            $output['data'] = [
+                'user_guid' => "user guid is not valid"
+            ];
+            return $response->withJson($output, 403);
         }
         else
         {
-            $this->res['data'] = $user;
+            $output['message'] = "success";
+            $output['data'] = $user;
+            return $response->withJson($output, 200);
         }
-        return $response->withJson($this->res, 200);
     }
 
     public function create(Request $request, Response $response)
@@ -58,18 +59,20 @@ class UserController
         if ($request->getAttribute('has_errors'))
         {
             $errors = $request->getAttribute('errors');
-            return $response->withJson([
-                        'status' => 'error',
-                        'message' => "",
-                        'data' => $errors,
-                            ], 403);
+            $output['message'] = "error";
+            $output['data'] = [
+                'user_guid' => "user guid is not valid"
+            ];
+            return $response->withJson($output, 403);
         }
         else
         {
             //load the modle class
             $users_model = new \App\Models\User_model($this->c->db);
-            $user = $users_model->get_user_by_guid($user_guid);
-            return $response->withJson($user, 200);
+            $user = $users_model->create_user($first_name, $last_name, $email, $phone);
+            $output['message'] = "success";
+            $output['data'] = $user;
+            return $response->withJson($output, 200);
         }
     }
 
@@ -84,42 +87,31 @@ class UserController
         $email = $post['email'];
         $phone = $post['phone'];
 
-        try
+        //retive the parameter from url
+        $user_guid = $request->getAttribute('user_guid');
+        //load the modle class
+        $users_model = new \App\Models\User_model($this->c->db);
+        $user = $users_model->get_user_by_guid($user_guid);
+        if (is_null($user))
         {
-            V::attribute('first_name', V::stringType()->notEmpty())->check($first_name);
-            V::attribute('last_name', V::stringType()->notEmpty())->check($last_name);
-        }
-        catch (ValidationException $ex)
-        {
-            return $response->withJson([
-                        'status' => 'error',
-                        'message' => $ex->getMainMessage(),
-                        'data' => [],
-                            ], 403);
-        }
-
-        if (!V::stringType()->notEmpty()->validate($last_name))
-        {
-            
-        }
-        elseif (!V::stringType()->notEmpty()->validate($email))
-        {
-            
-        }
-        elseif (!V::stringType()->notEmpty()->validate($phone))
-        {
-            
+            $output = [
+                'message' => "error",
+                'data' => [
+                    'user_guid' => "user guid is not valid"
+                ],
+            ];
+            return $response->withJson($output, 200);
         }
         else
         {
             $users_model = new \App\Models\User_model($this->c->db);
             $users_model->update_user_by_guid($user_guid, $first_name, $last_name, $email, $phone);
             $user = $users_model->get_user_by_guid($user_guid);
-            return $response->withJson([
-                        'status' => 'success',
-                        'message' => "user updated",
-                        'data' => $user
-                            ], 200);
+            $output = [
+                'message' => "success",
+                'data' => $user,
+            ];
+            return $response->withJson($output, 200);
         }
     }
 
