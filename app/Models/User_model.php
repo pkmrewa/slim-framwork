@@ -62,4 +62,21 @@ class User_model
         return $this->get_user_by_guid($user_guid);
     }
 
+    /**
+     * 
+     * @param type $user_guid
+     * @param type $first_name
+     * @param type $last_name
+     * @param type $email
+     * @param type $phone
+     * @return type
+     */
+    public function create_user($first_name, $last_name, $email, $phone)
+    {
+        $user_guid = uniqid();
+        $sql = "INSERT INTO users SET user_guid='$user_guid', first_name='$first_name', last_name='$last_name', email='$email', phone='$phone'";
+        $query = $this->db->query($sql);
+        return $this->get_user_by_guid($user_guid);
+    }
+
 }

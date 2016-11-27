@@ -25,7 +25,7 @@ $app->group('/api', function() use ($app)
 
         //POST Endpoint for '/users' create user
         //Create the validators
-        $validators = [
+        $create_validators = [
             'first_name' => v::stringType()->notEmpty(),
             'last_name' => v::stringType()->notEmpty(),
             'email' => v::stringType()->notEmpty(),
@@ -33,17 +33,17 @@ $app->group('/api', function() use ($app)
         ];
 
         $app->post('', 'App\Controllers\UserController:create')
-                ->add(new \DavidePastore\Slim\Validation\Validation($validators));
+                ->add(new \DavidePastore\Slim\Validation\Validation($create_validators));
 
         //PUT Endpoint for '/users/user_guid' user details update
-        $validators = [
+        $update_validators = [
             'first_name' => v::stringType()->notEmpty(),
             'last_name' => v::stringType()->notEmpty(),
             'email' => v::stringType()->notEmpty(),
             'phone' => v::stringType()->notEmpty(),
         ];
-        $app->put('/{user_guid}', 'App\Controllers\UserController:update')
-                ->add(new \DavidePastore\Slim\Validation\Validation($validators));
+        $app->put('/[{user_guid}]', 'App\Controllers\UserController:update')
+                ->add(new \DavidePastore\Slim\Validation\Validation($update_validators));
 
         //DELTE Endpoint for '/users/user_guid' user details delete
         $app->delete('/{user_guid}', 'App\Controllers\UserController:delete');

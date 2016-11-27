@@ -55,20 +55,24 @@ class UserController
 
     public function create(Request $request, Response $response)
     {
-
+        $post = $request->getParsedBody();
         if ($request->getAttribute('has_errors'))
         {
             $errors = $request->getAttribute('errors');
             $output['message'] = "error";
-            $output['data'] = [
-                'user_guid' => "user guid is not valid"
-            ];
+            $output['data'] = $errors;
             return $response->withJson($output, 403);
         }
         else
         {
             //load the modle class
             $users_model = new \App\Models\User_model($this->c->db);
+
+            $first_name = $post['first_name'];
+            $last_name = $post['last_name'];
+            $email = $post['email'];
+            $phone = $post['phone'];
+
             $user = $users_model->create_user($first_name, $last_name, $email, $phone);
             $output['message'] = "success";
             $output['data'] = $user;
@@ -81,18 +85,22 @@ class UserController
         //retive the parameter from url
         $post = $request->getParsedBody();
 
-        $user_guid = $request->getAttribute('user_guid');
-        $first_name = $post['first_name'];
-        $last_name = $post['last_name'];
-        $email = $post['email'];
-        $phone = $post['phone'];
-
         //retive the parameter from url
         $user_guid = $request->getAttribute('user_guid');
         //load the modle class
         $users_model = new \App\Models\User_model($this->c->db);
         $user = $users_model->get_user_by_guid($user_guid);
-        if (is_null($user))
+        if (empty($user_guid))
+        {
+            $output = [
+                'message' => "error",
+                'data' => [
+                    'user_guid' => "user guid is required"
+                ],
+            ];
+            return $response->withJson($output, 403);
+        }
+        elseif (is_null($user))
         {
             $output = [
                 'message' => "error",
@@ -100,11 +108,23 @@ class UserController
                     'user_guid' => "user guid is not valid"
                 ],
             ];
-            return $response->withJson($output, 200);
+            return $response->withJson($output, 403);
+        }
+        elseif ($request->getAttribute('has_errors'))
+        {
+            $errors = $request->getAttribute('errors');
+            $output['message'] = "error";
+            $output['data'] = $errors;
+            return $response->withJson($output, 403);
         }
         else
         {
             $users_model = new \App\Models\User_model($this->c->db);
+            $first_name = $post['first_name'];
+            $last_name = $post['last_name'];
+            $email = $post['email'];
+            $phone = $post['phone'];
+
             $users_model->update_user_by_guid($user_guid, $first_name, $last_name, $email, $phone);
             $user = $users_model->get_user_by_guid($user_guid);
             $output = [
