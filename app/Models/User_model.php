@@ -64,7 +64,6 @@ class User_model
 
     /**
      * 
-     * @param type $user_guid
      * @param type $first_name
      * @param type $last_name
      * @param type $email
@@ -77,6 +76,17 @@ class User_model
         $sql = "INSERT INTO users SET user_guid='$user_guid', first_name='$first_name', last_name='$last_name', email='$email', phone='$phone'";
         $query = $this->db->query($sql);
         return $this->get_user_by_guid($user_guid);
+    }
+
+    /**
+     * 
+     * @param type $user_guid
+     * @return type $user 
+     */
+    public function delete_user_by_guid($user_guid)
+    {
+        $sql = "DELETE FROM users WHERE user_guid='$user_guid'";
+        $query = $this->db->query($sql);
     }
 
 }

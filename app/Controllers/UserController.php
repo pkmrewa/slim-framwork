@@ -119,7 +119,6 @@ class UserController
         }
         else
         {
-            $users_model = new \App\Models\User_model($this->c->db);
             $first_name = $post['first_name'];
             $last_name = $post['last_name'];
             $email = $post['email'];
@@ -140,9 +139,37 @@ class UserController
         //retive the parameter from url
         $user_guid = $request->getAttribute('user_guid');
         //load the modle class
-        $users_model = new \App\Models\User_model();
+        $users_model = new \App\Models\User_model($this->c->db);
         $user = $users_model->get_user_by_guid($user_guid);
-        return $response->withJson($user, 200);
+        if (empty($user_guid))
+        {
+            $output = [
+                'message' => "error",
+                'data' => [
+                    'user_guid' => "user guid is required"
+                ],
+            ];
+            return $response->withJson($output, 403);
+        }
+        elseif (is_null($user))
+        {
+            $output = [
+                'message' => "error",
+                'data' => [
+                    'user_guid' => "user guid is not valid"
+                ],
+            ];
+            return $response->withJson($output, 403);
+        }
+        else
+        {
+            $users_model->delete_user_by_guid($user_guid);
+            $output = [
+                'message' => "success",
+                'data' => [],
+            ];
+            return $response->withJson($output, 200);
+        }
     }
 
 }
