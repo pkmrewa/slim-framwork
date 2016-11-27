@@ -20,7 +20,12 @@ $app->group('/api', function() use ($app)
         $app->get('', 'App\Controllers\UserController:index');
 
         //GET Endpoint for '/users/user_guid' user details
-        $app->get('/{user_guid}', 'App\Controllers\UserController:show');
+        //Create the validators
+        $validators = [
+            'user_guid' => v::stringType()->notEmpty(),
+        ];
+        $app->get('/[{user_guid}]', 'App\Controllers\UserController:show')
+                ->add(new \DavidePastore\Slim\Validation\Validation($validators));
 
         //POST Endpoint for '/users' create user
         //Create the validators
