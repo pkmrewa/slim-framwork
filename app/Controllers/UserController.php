@@ -26,6 +26,7 @@ class UserController
         $users_model = new \App\Models\User_model($this->c->db);
         //call the function to get list of users
         $users = $users_model->users();
+        $output['message'] = "success";
         $output['data'] = $users;
         return $response->withJson($output, 200);
     }

@@ -89,7 +89,7 @@ class Order_model
      */
     public function update_order_by_guid($order_guid, $status)
     {
-        $sql = "UPDATE users SET status='$status' WHERE order_guid='$order_guid'";
+        $sql = "UPDATE orders SET status='$status' WHERE order_guid='$order_guid'";
         $query = $this->db->query($sql);
         return $this->get_order_by_guid($order_guid);
     }

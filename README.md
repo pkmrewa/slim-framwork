@@ -1,26 +1,49 @@
-# Slim Framework 3 Skeleton Application
+project setup
+1. paste "slim-test-app" folder in htdocs folder
+2. open command prompt and goto "slim-test-app" folder
+3. run command composer install (make sure you already have the composer installed on computer)
+4. php -S 127.0.0.1:8080 -t public public/index.php
 
-Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
+User management Web services 
 
-This skeleton application was built for Composer. This makes setting up a new Slim Framework application quick and easy.
+GET http://127.0.0.1:8080/api/users
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":[{"user_guid":"583bd7bb3fadd","first_name":"Robert","last_name":"D","email":"robertd@mailinator.com","phone":"123456789"}]}'
 
-## Install the Application
+POST http://127.0.0.1:8080/api/users 
+    Request JSON: '{"first_name":"Robert","last_name":"D","email":"robertd@mailinator.com","phone":"123456789"}'
+    Response JSON: '{"message":"success","data":{"user_guid":"583bd7bb3fadd","first_name":"Robert","last_name":"D","email":"robertd@mailinator.com","phone":"123456789"}}'
 
-Run this command from the directory in which you want to install your new Slim Framework application.
+GET http://127.0.0.1:8080/api/users/583bd7bb3fadd
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":{"user_guid":"583bd7bb3fadd","first_name":"Robert","last_name":"D","email":"robertd@mailinator.com","phone":"123456789"}}'
 
-    php composer.phar create-project slim/slim-skeleton [my-app-name]
+PUT http://127.0.0.1:8080/api/users/583bd7bb3fadd 
+    Request JSON: '{"first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}'
+    Response JSON: '{"message":"success","data":{"user_guid":"583bd7bb3fadd","first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}}'
 
-Replace `[my-app-name]` with the desired directory name for your new application. You'll want to:
+DELETE http://127.0.0.1:8080/api/users/583bd7bb3fadd 
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":[]}'
 
-* Point your virtual host document root to your new application's `public/` directory.
-* Ensure `logs/` is web writeable.
 
-To run the application in development, you can also run this command. 
+Order management Web services 
+GET http://127.0.0.1:8080/api/orders
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":[{"order_guid":"583bd9ba1e429","order_total":"100","created_at":"2016-11-28 07:16:10","status":"ORDERED","user":{"user_guid":"583bd98fe43b2","first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}}]}'
 
-	php composer.phar start
+POST http://127.0.0.1:8080/api/orders 
+    Request JSON: '{"user_guid":"583bd98fe43b2","order_total":"100"}'
+    Response JSON: '{"message":"success","data":{"order_guid":"583bd9ba1e429","order_total":"100","created_at":"2016-11-28 07:16:10","status":"ORDERED","user":{"user_guid":"583bd98fe43b2","first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}}}'
 
-Run this command to run the test suite
+GET http://127.0.0.1:8080/api/orders/583bd9ba1e429
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":{"order_guid":"583bd9ba1e429","order_total":"100","created_at":"2016-11-28 07:16:10","status":"ORDERED","user":{"user_guid":"583bd98fe43b2","first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}}}'
 
-	php composer.phar test
+PUT http://127.0.0.1:8080/api/orders/583bd7bb3fadd 
+    Request JSON: '{"status":"CANCELLED"}'
+    Response JSON: '{"message":"success","data":{"order_guid":"583bd9ba1e429","order_total":"100","created_at":"2016-11-28 07:16:10","status":"CANCELLED","user":{"user_guid":"583bd98fe43b2","first_name":"Robertu","last_name":"Du","email":"robertdu@mailinator.com","phone":"123456789"}}}'
 
-That's it! Now go build something cool.
+DELETE http://127.0.0.1:8080/api/orders/583bd7bb3fadd 
+    Request JSON: ''
+    Response JSON: '{"message":"success","data":[]}'

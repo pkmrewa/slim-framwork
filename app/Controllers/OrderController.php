@@ -26,6 +26,7 @@ class OrderController
         $orders_model = new \App\Models\Order_model($this->c->db);
         //call the function to get list of users
         $orders = $orders_model->orders();
+        $output['message'] = "success";
         $output['data'] = $orders;
         return $response->withJson($output, 200);
     }
